@@ -1,8 +1,6 @@
 # This imports everything that you need
 from gen_pawn_war import *
 
-
-
 class YourPawnWarBot(PawnWarBot):
     def make_move(self, chess_board: chess.Board) -> chess.Move:
         # Implement your strategy here! See example_bots.py for some ideas.
