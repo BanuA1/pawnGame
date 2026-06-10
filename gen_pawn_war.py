@@ -1,12 +1,13 @@
 import chess
+import random # not used, but nice to have imported for other scripts
 
 
 class LabeledBoard(chess.Board):
-    def __str__(self):
-        rows = []
+    def __str__(self) -> str:
+        rows: list[str] = []
 
         for rank in range(7, -1, -1):
-            pieces = []
+            pieces: list[str] = []
 
             for file in range(8):
                 square = chess.square(file, rank)
@@ -20,7 +21,7 @@ class LabeledBoard(chess.Board):
         return "\n".join(rows)
 
 
-def make_pawn_war_board():
+def make_pawn_war_board() -> LabeledBoard:
     board = LabeledBoard(None)
 
     for column in range(8):
@@ -32,7 +33,7 @@ def make_pawn_war_board():
     return board
 
 
-def count_pawns(board, color):
+def count_pawns(board: chess.Board, color: chess.Color) -> int:
     count = 0
 
     for square in chess.SQUARES:
@@ -42,7 +43,7 @@ def count_pawns(board, color):
     return count
 
 
-def is_forward_move(board, move, color):
+def is_forward_move(board: chess.Board, move: chess.Move, color: chess.Color) -> bool:
     from_file = chess.square_file(move.from_square)
     from_rank = chess.square_rank(move.from_square)
     to_file = chess.square_file(move.to_square)
@@ -66,8 +67,38 @@ def is_forward_move(board, move, color):
 
     return False
 
+def is_enemy_piece(board: chess.Board, square_name: str) -> bool:
+    square = chess.parse_square(square_name)
+    piece = board.piece_at(square)
 
-def is_capture_move(board, move, color):
+    if piece is None:
+        # empty square, not an enemy piece
+        return False
+
+    if piece.color == board.turn:
+        # piece belongs to the current player: not an enemy piece
+        return False
+    else:
+        # piece belongs to the opponent: it's an enemy piece
+        return True
+    
+def is_my_piece(board: chess.Board, square_name: str) -> bool:
+    square = chess.parse_square(square_name)
+    piece = board.piece_at(square)
+
+    if piece is None:
+        # empty square, not my piece
+        return False
+
+    if piece.color == board.turn:
+        # piece belongs to the current player: it's my piece
+        return True
+    else:
+        # piece belongs to the opponent: not my piece
+        return False
+
+
+def is_capture_move(board: chess.Board, move: chess.Move, color: chess.Color) -> bool:
     from_file = chess.square_file(move.from_square)
     from_rank = chess.square_rank(move.from_square)
     to_file = chess.square_file(move.to_square)
@@ -85,7 +116,7 @@ def is_capture_move(board, move, color):
     return captured_piece == chess.Piece(chess.PAWN, not color)
 
 
-def is_legal_pawn_war_move(board, move):
+def is_legal_pawn_war_move(board: chess.Board, move: chess.Move) -> bool:
     piece = board.piece_at(move.from_square)
 
     if piece != chess.Piece(chess.PAWN, board.turn):
@@ -97,8 +128,8 @@ def is_legal_pawn_war_move(board, move):
     return is_forward_move(board, move, board.turn) or is_capture_move(board, move, board.turn)
 
 
-def legal_pawn_war_moves(board):
-    moves = []
+def legal_pawn_war_moves(board: chess.Board) -> list[chess.Move]:
+    moves: list[chess.Move] = []
 
     for from_square in chess.SQUARES:
         piece = board.piece_at(from_square)
@@ -110,7 +141,7 @@ def legal_pawn_war_moves(board):
         from_rank = chess.square_rank(from_square)
         direction = 1 if board.turn == chess.WHITE else -1
 
-        possible_squares = []
+        possible_squares: list[chess.Square] = []
 
         one_step_rank = from_rank + direction
         two_step_rank = from_rank + 2 * direction
@@ -137,7 +168,7 @@ def legal_pawn_war_moves(board):
     return moves
 
 
-def pawn_reached_end(board):
+def pawn_reached_end(board: chess.Board) -> chess.Color | None:
     for square in chess.SquareSet(chess.BB_RANK_8):
         if board.piece_at(square) == chess.Piece(chess.PAWN, chess.WHITE):
             return chess.WHITE
@@ -149,7 +180,7 @@ def pawn_reached_end(board):
     return None
 
 
-def pawn_war_result(board):
+def pawn_war_result(board: chess.Board) -> str | None:
     winner = pawn_reached_end(board)
 
     if winner == chess.WHITE:
@@ -168,7 +199,7 @@ def pawn_war_result(board):
     return None
 
 
-def try_move(board, move_text):
+def try_move(board: chess.Board, move_text: str) -> tuple[bool, str]:
     try:
         move = chess.Move.from_uci(move_text)
     except ValueError:
@@ -185,18 +216,25 @@ def try_move(board, move_text):
 
     return True, "Move played."
 
+# abstract class for bot implementation
+# takes in a board, outputs a move
+class PawnWarBot:
+    def make_move(self, chess_board: chess.Board) -> chess.Move:
+        raise NotImplementedError("Your bot needs to figure out how to make a move!")
 
-board = make_pawn_war_board()
+# If you run this code, you can play a game of Pawn War against yourself in the terminal. Just enter moves (like e2e4) and see how the game unfolds!
+if __name__ == "__main__":
+    board = make_pawn_war_board()
 
-while True:
-    print(board)
-    print("Turn:", "White" if board.turn == chess.WHITE else "Black")
-    print("Legal moves:", [move.uci() for move in legal_pawn_war_moves(board)])
+    while True:
+        print(board)
+        print("Turn:", "White" if board.turn == chess.WHITE else "Black")
+        print("Legal moves:", [move.uci() for move in legal_pawn_war_moves(board)])
 
-    move_text = input("Move: ")
-    ok, message = try_move(board, move_text)
-    print(message)
-    print()
+        move_text = input("Move: ")
+        ok, message = try_move(board, move_text)
+        print(message)
+        print()
 
-    if "wins" in message or "Tie game" in message:
-        break
+        if "wins" in message or "Tie game" in message:
+            break
