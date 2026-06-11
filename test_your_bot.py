@@ -4,11 +4,15 @@ Use this script to test how your bot performs.
 Uppercase P = white pawns
 Lowercase p = black pawns
 '''
-from example_bots import *
+from gen_pawn_war import *
+# choose one of these as the enemy bot to test against
+from example_bots import RandomPawnWarBot, CapturePawnWarBot
 from your_bot import YourPawnWarBot
 
 
 your_bot = YourPawnWarBot()
+# Use either `enemy_bot = RandomPawnWarBot()` or `enemy_bot = CapturePawnWarBot()` depending on which bot you want to test against
+# TODO bot is stronger
 enemy_bot = CapturePawnWarBot()
 
 # choose the first player randomly

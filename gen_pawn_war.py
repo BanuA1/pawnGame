@@ -1,9 +1,12 @@
+# YOU DO NOT NEED TO READ OR UNDERSTAND THIS CODE AT ALL
+# Implementation of the Pawn War chess variant, where each player starts with 8 pawns and the goal is to get a pawn to the other side of the board or capture all of the opponent's pawns.
+# En Passant is not allowed, and games end in a tie if a player has no legal moves on their turn (even if they still have pawns left).
+
 import chess
 import random # not used, but nice to have imported for other scripts
 
 # either "White", "Black", "Tie", or None if the game is still ongoing
 WinnerColor = str | None
-
 
 class LabeledBoard(chess.Board):
     def __str__(self) -> str:
