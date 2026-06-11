@@ -5,7 +5,11 @@
 import chess
 import random # not used, but nice to have imported for other scripts
 
-# either "White", "Black", "Tie", or None if the game is still ongoing
+WHITE_WINNER = "White"
+BLACK_WINNER = "Black"
+TIE_WINNER = "Tie"
+
+# either WHITE_WINNER, BLACK_WINNER, TIE_WINNER, or None if the game is still ongoing
 WinnerColor = str | None
 
 class LabeledBoard(chess.Board):
