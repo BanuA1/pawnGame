@@ -11,8 +11,6 @@ from your_bot import YourPawnWarBot
 your_bot = YourPawnWarBot()
 enemy_bot = CapturePawnWarBot()
 
-board = make_pawn_war_board()
-
 # choose the first player randomly
 first_player = random.choice([your_bot, enemy_bot])
 if first_player == your_bot:
@@ -22,7 +20,9 @@ else:
     print("Your bot is playing as black and goes second!")
     second_player = your_bot
 
+# set up the game
 current_player = first_player
+board = make_pawn_war_board()
 result = pawn_war_result(board)
 # keep playing the game until there's a result (win for white, win for black, or tie)
 while result is None:
@@ -39,9 +39,10 @@ while result is None:
     board.push(move)
     result = pawn_war_result(board)
 
+# display the results
 print(board)
-print(result)
+print(f"The winner is: {result}")
 if your_bot == first_player:
-    print("(As a reminder, your bot was playing as white.)")
+    print("(Your bot was playing as White.)")
 else:
-    print("(As a reminder, your bot was playing as black.)")
+    print("(Your bot was playing as Black.)")

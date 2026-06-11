@@ -1,6 +1,9 @@
 import chess
 import random # not used, but nice to have imported for other scripts
 
+# either "White", "Black", "Tie", or None if the game is still ongoing
+WinnerColor = str | None
+
 
 class LabeledBoard(chess.Board):
     def __str__(self) -> str:
@@ -180,21 +183,25 @@ def pawn_reached_end(board: chess.Board) -> chess.Color | None:
     return None
 
 
-def pawn_war_result(board: chess.Board) -> str | None:
+def pawn_war_result(board: chess.Board) -> WinnerColor:
+    # set winner if a pawn reached the end of the board
     winner = pawn_reached_end(board)
-
-    if winner == chess.WHITE:
-        return "White wins by reaching rank 8!"
-    elif winner == chess.BLACK:
-        return "Black wins by reaching rank 1!"
-
-    if count_pawns(board, chess.WHITE) == 0:
-        return "Black wins by capturing all white pawns!"
-    elif count_pawns(board, chess.BLACK) == 0:
-        return "White wins by capturing all black pawns!"
+    if winner is not None:
+        # there's a winner due to a pawn reaching the end of the board
+        if winner == chess.WHITE:
+            return "White"
+        else:
+            return "Black"
+    else:
+        # no pawn has reached the end of the board
+        # check other end game conditions
+        if count_pawns(board, chess.WHITE) == 0:
+            return "Black"
+        elif count_pawns(board, chess.BLACK) == 0:
+            return "White"
 
     if len(legal_pawn_war_moves(board)) == 0:
-        return "Tie game! The player to move has no legal pawn moves."
+        return "Tie"
 
     return None
 
@@ -212,7 +219,12 @@ def try_move(board: chess.Board, move_text: str) -> tuple[bool, str]:
 
     result = pawn_war_result(board)
     if result is not None:
-        return True, result
+        if result == "Tie":
+            return True, "Tie game!"
+        elif result == "White":
+            return True, "White wins!"
+        else:
+            return True, "Black wins!"
 
     return True, "Move played."
 
@@ -236,5 +248,5 @@ if __name__ == "__main__":
         print(message)
         print()
 
-        if "wins" in message or "Tie game" in message:
-            break
+        if "wins" in message or "Tie" in message:
+            break # this command makes the code stop running the while loop
