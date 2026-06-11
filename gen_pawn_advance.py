@@ -53,7 +53,7 @@ def count_pawns(board: chess.Board, color: chess.Color) -> int:
     return count
 
 
-def is_straight_move(board: chess.Board, move: chess.Move, color: chess.Color) -> bool:
+def is_forward_move(board: chess.Board, move: chess.Move, color: chess.Color) -> bool:
     from_file = chess.square_file(move.from_square)
     from_rank = chess.square_rank(move.from_square)
     to_file = chess.square_file(move.to_square)
@@ -135,7 +135,7 @@ def is_legal_pawn_advance_move(board: chess.Board, move: chess.Move) -> bool:
     if move.promotion is not None:
         return False
 
-    return is_straight_move(board, move, board.turn) or is_capture_move(board, move, board.turn)
+    return is_forward_move(board, move, board.turn) or is_capture_move(board, move, board.turn)
 
 
 def legal_pawn_advance_moves(board: chess.Board) -> list[chess.Move]:
