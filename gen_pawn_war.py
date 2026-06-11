@@ -242,6 +242,7 @@ class PawnWarBot:
         raise NotImplementedError("Your bot needs to figure out how to make a move!")
 
 # If you run this code, you can play a game of Pawn War against yourself in the terminal. Just enter moves (like e2e4) and see how the game unfolds!
+# the `if __name__ == "__main__":` makes it so that when other scripts import this file, they don't accidentally start a game in the terminal just by running an import
 if __name__ == "__main__":
     board = make_pawn_war_board()
 
